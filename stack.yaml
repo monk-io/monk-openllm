@@ -1,0 +1,15 @@
+namespace: bentoml
+
+stack:
+  defines: process-group
+  metadata:
+    website: https://github.com/bentoml/OpenLLM
+    name: OpenLLM
+    icon: https://github.com/bentoml/OpenLLM/blob/main/.github/assets/main-banner.png
+    publisher: monk.io
+    source: https://github.com/bentoml/OpenLLM
+    tags: llm
+    description: |
+      OpenLLM is an open-source platform designed to facilitate the deployment and operation of large language models (LLMs) in real-world applications.
+  runnable-list:
+    - bentoml/openllm
