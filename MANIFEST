@@ -1,2 +1,2 @@
 REPO monk-openllm
-LOAD openllm.yaml stack.yaml
+LOAD openllm.yaml

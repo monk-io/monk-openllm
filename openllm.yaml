@@ -1,6 +1,13 @@
 namespace: bentoml
 openllm:
   defines: runnable
+  metadata:
+    website: https://github.com/bentoml/OpenLLM
+    name: OpenLLM
+    publisher: monk.io
+    source: https://github.com/bentoml/OpenLLM
+    tags: llm
+    description: OpenLLM is an open-source platform designed to facilitate the deployment and operation of large language models (LLMs) in real-world applications.
   containers:
     server:
       image: ghcr.io/bentoml/openllm
@@ -17,7 +24,7 @@ openllm:
   variables:
     model:
       type: string
-      value: tiiuae/falcon-7b
+      value: mistralai/Mistral-7B-v0.1
     backend:
       type: string
       value: vllm
