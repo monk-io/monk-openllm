@@ -97,5 +97,5 @@ Also for large models it is recommended to use SSD drives to speed up the loadin
 ## Stop, remove and clean up workloads and templates
 
 ```bash
-monk purge bentoml/stack
+monk purge bentoml/openllm
 ```
