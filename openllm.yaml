@@ -4,6 +4,7 @@ openllm:
   metadata:
     website: https://github.com/bentoml/OpenLLM
     name: OpenLLM
+    icon: https://avatars.githubusercontent.com/u/49176046?s=64
     publisher: monk.io
     source: https://github.com/bentoml/OpenLLM
     tags: llm
