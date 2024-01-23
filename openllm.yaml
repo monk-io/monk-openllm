@@ -11,7 +11,7 @@ openllm:
   containers:
     server:
       image: ghcr.io/bentoml/openllm
-      entrypoint: <- `openllm start ${model} --backend ${backend} --debug --max-model-len 8464`
+      entrypoint: <- `openllm start ${model} --backend ${backend} --debug ${params}`
       resources:
         requests:
           nvidia.com/gpu: 1
@@ -28,3 +28,6 @@ openllm:
     backend:
       type: string
       value: vllm
+    params:
+      type: string
+      value: --max-model-len 8464
