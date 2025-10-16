@@ -1,0 +1,158 @@
+---
+title: OpenLLM
+description: Ready-to-run OpenLLM container template you can run directly or inherit to deploy and serve large language models in production.
+primary_category: ai-ml
+tags: [openllm, llm, ai, ml, template, runnable, inference, bentoml, language-model]
+integration_type: template
+hosting_models: [self-hosted]
+website_url: https://github.com/bentoml/OpenLLM
+docs_url: https://github.com/bentoml/OpenLLM/blob/main/README.md
+publisher: monk.io
+---
+
+## Overview
+
+This template provides a production‑ready OpenLLM instance as a Monk runnable. You can:
+
+- Run it directly to deploy and serve large language models
+- Inherit it in your own runnable to seamlessly add LLM inference to your AI stack
+
+It exposes OpenLLM on port 3000, supports GPU acceleration, and can serve various models from HuggingFace with configurable backends (vLLM, PyTorch, etc.).
+
+## What this template manages
+
+- OpenLLM container (`ghcr.io/bentoml/openllm` image)
+- Network service on port 3000
+- GPU resource allocation
+- Model loading and serving
+- Health checks and readiness probes
+
+## Quick start (run directly)
+
+1) Load templates
+
+```bash
+monk load MANIFEST
+```
+
+2) Run OpenLLM with defaults
+
+```bash
+monk run bentoml/openllm
+```
+
+3) Customize model (recommended via inheritance)
+
+Running directly uses the defaults defined in this template's `variables` (Mistral-7B with vLLM backend).
+
+- Preferred: inherit and override variables as shown below.
+- Alternative: fork/clone and edit the `variables` in `bentoml/openllm.yaml`, then `monk load MANIFEST` and run.
+
+Once started, query the model at `localhost:3000` (or the runnable hostname inside Monk networks).
+
+```bash
+curl -X POST http://localhost:3000/v1/generate \
+  -H "Content-Type: application/json" \
+  -d '{
+    "prompt": "Explain quantum computing",
+    "max_tokens": 100
+  }'
+```
+
+## Configuration
+
+Key variables you can customize in this template:
+
+```yaml
+variables:
+  model: "mistralai/Mistral-7B-v0.1"   # HuggingFace model ID
+  backend: "vllm"                       # backend (vllm, pt, etc.)
+  params: "--max-model-len 8464"        # additional OpenLLM parameters
+```
+
+The container requests 1 GPU by default. Models are downloaded and cached automatically on first start.
+
+## Use by inheritance (recommended for AI platforms)
+
+Inherit the OpenLLM runnable in your application and declare a connection. Example:
+
+```yaml
+namespace: myapp
+llm:
+  defines: runnable
+  inherits: bentoml/openllm
+  variables:
+    model: "meta-llama/Llama-2-7b-chat-hf"
+    backend: "vllm"
+    params: "--max-model-len 4096"
+api:
+  defines: runnable
+  containers:
+    api:
+      image: myorg/ai-api
+  connections:
+    llm-service:
+      runnable: llm
+      service: web
+  variables:
+    llm-endpoint:
+      value: <- connection-hostname("llm-service")
+```
+
+Then run your app group:
+
+```bash
+monk run myapp/api
+```
+
+## Ports and connectivity
+
+- Service: `web` on TCP port `3000`
+- From other runnables in the same process group, use `connection-hostname("<connection-name>")` to resolve the LLM host.
+
+## Features and capabilities
+
+- Serve multiple LLM architectures (Llama, Mistral, Falcon, MPT, StarCoder, etc.)
+- Production-ready inference with vLLM backend for high throughput
+- OpenAI-compatible API endpoints
+- GPU acceleration support
+- Automatic batching and optimization
+- Health checks and monitoring
+- Streaming responses
+- Model quantization support
+
+## Supported Models
+
+OpenLLM supports models from HuggingFace:
+- Llama 2 and Llama 3 (7B, 13B, 70B)
+- Mistral and Mixtral
+- Falcon (7B, 40B)
+- MPT and MPT-Instruct
+- StarCoder and CodeLlama
+- And many more from the HuggingFace model hub
+
+## Related templates
+
+- Combine with vector databases (`qdrant/`, `chroma/`) for RAG applications
+- Use with `langfuse/` for LLM observability and tracing
+- Integrate with application frameworks for AI-powered apps
+
+## Troubleshooting
+
+- Check server health:
+
+```bash
+curl http://localhost:3000/healthz
+```
+
+- Check logs:
+
+```bash
+monk logs -l 500 -f bentoml/openllm
+```
+
+- For GPU support, ensure NVIDIA drivers, CUDA toolkit, and Docker GPU runtime are installed on the host
+- Model loading can take several minutes on first start depending on model size
+- Monitor GPU memory usage, LLMs require significant VRAM
+- Adjust `--max-model-len` parameter to fit your GPU memory constraints
+- If container fails to start, check that GPU resources are available
