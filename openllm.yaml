@@ -22,6 +22,9 @@ openllm:
       period: 5
       initialDelay: 10
       attempts: 100
+    liveness:
+      code: exec("server", "curl", "-I", "http://localhost:3000/healthz") contains?("200 OK")
+      period: 60
   services:
     web:
       container: server
